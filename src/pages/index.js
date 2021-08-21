@@ -56,8 +56,8 @@ function Home() {
     const { siteConfig = {} } = context;
     return (
         <Layout
-            title={`Hello from ${siteConfig.title}`}
-            description="Description will go into a meta tag in <head />">
+            title={`Better RiotJS DX with ${siteConfig.title}`}
+            description="Take your RiotJS apps to the next level">
             <header className={clsx('hero hero--primary', styles.heroBanner)}>
                 <div className="container">
                     <h1 className="hero__title">{siteConfig.title}</h1>
@@ -68,7 +68,7 @@ function Home() {
                                 'button button--outline button--secondary button--lg',
                                 styles.getStarted,
                             )}
-                            to={useBaseUrl('docs/')}>
+                            to={useBaseUrl('meiosis/getting-started')}>
                             Get Started
                         </Link>
                     </div>

@@ -37,7 +37,7 @@ module.exports = {
                         },
                         {
                             label: "Final Form",
-                            to: "final-form/",
+                            to: "final-form/getting-started",
                         },
                     ],
                 },
@@ -58,10 +58,6 @@ module.exports = {
                 {
                     title: "More",
                     items: [
-                        {
-                            label: "Blog",
-                            to: "blog",
-                        },
                         {
                             label: "GitHub",
                             href: "https://github.com/riot-tools",
