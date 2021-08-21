@@ -7,28 +7,26 @@ slug: /meiosis/getting-started
 
 ## What is meiosis?
 
-Meiosis is a design pattern for managing application state using streams. Riot meiosis is an implementation of that pattern for Riot using Erre. [Learn more about meiosis to understand the concept](http://RiotMeiosis.js.org).
+Meiosis is a design pattern for managing application state using streams. Riot meiosis is an implementation of that pattern for Riot. [Learn more about meiosis to understand the concept](https://meiosis.js.org/).
 
-Key things to note:
-- Implements a stream to update state
+## Key things to note
+
+- Implements a stream mechanism to update state
 - Comes with a `connect` function to wrap stream functionality
-- Components attempt to update when stream is pushed to
+- Components attempt to update when updates are dispatched
 - Prevent component updates if state has not changed
 - Stream listeners are destroyed when `onBeforeUnmount`
 
 ## Usage
 
-```
-npm i -D riot-meiosis
+```sh
+npm i --save @riot-tools/meiosis
 ```
 
+`./appState.js`
+
 ```js
-import {
-    connect,
-    getState,
-    createStream,
-    getStream,
-} from 'riot-meiosis';
+import createStateStream from '@riot-tools/meiosis';
 
 // Set your initial state.
 // State is only mutable via manager API.
@@ -37,7 +35,7 @@ const state = {
     isNew: true,
     mutable: false,
     nested: {
-        hasCandy: true
+        hasPasta: true
     }
 };
 
@@ -47,38 +45,45 @@ const reducer = (newState, oldState) => ({
     ...newState
 });
 
-// Create global application stream (can only run once)
-const stream = createStream(reducer, stub.state);
+// Create global app state instance
+const appState = createStateStream(state);
+
+// Extract the state stream
+const { stream } = appState;
+
+stream.addReducer(reducer);
 
 // stream is simply an Erre stream
-stream.push({
+stream.dispatch({
     initial: false,
     isNew: false
 });
 
 // Gets an immutable clone of the current state
-console.log(getState());
+console.log(stream.state());
 // > {
 //     initial: false,
 //     isNew: false,
 //     mutable: false,
 //     nested: {
-//         hasCandy: true
+//         hasPasta: true
 //     }
 // }
 
+export default appState;
 ```
 
 In your `.riot` files:
+
 ```html
 
 <myComponent>
 
-    <p if={ hasCandy }>I have candy!</p>
+    <p if={ hasPasta }>I have pasta!</p>
 
     <script>
 
-        import { connect } from 'riot-meiosis';
+        import { connect } from './appState';
         import myActions from './actions';
 
         const mapToState = (appState, ownState, ownProps) => ({
@@ -99,6 +104,12 @@ In your `.riot` files:
                 this.state = {
                     lala: true
                 }
+            },
+
+            onMounted() {
+
+                // Component will have access to dispatch from lexical this
+                this.dispatch({ myComponentMounted: true });
             }
         }
 
@@ -107,52 +118,4 @@ In your `.riot` files:
         export default connect(mapToState, mapToComponent)(component);
     </script>
 </myComponent>
-```
-
-#### In-browser compilation
-
-```html
-<body>
-
-    <samplecomponent></samplecomponent>
-    <rmdevtools debounce="0"></rmdevtools>
-
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/riot/5.2.0/riot+compiler.min.js"></script>
-
-    <script src="./dist/umd.js"></script>
-
-    <script>
-        const state = {
-            buttonclicked: 0,
-            someInput: '',
-            items: [
-                { text: 'try riot meioses', checked: true },
-                { text: 'try rmdevtools', checked: false }
-            ]
-        };
-
-
-        const reducer = (newState, oldState) => ({
-            ...oldState,
-            ...newState
-        });
-
-        RiotMeiosis.createStream(reducer, state);
-
-        (async function main() {
-            await riot.compile();
-
-            riot.mount('samplecomponent');
-
-            await riot.register(
-                'rmdevtools',
-                RiotMeiosis.RMDevTools(RiotMeiosis)
-            );
-
-            riot.mount('rmdevtools');
-
-          }())
-
-    </script>
-</body>
 ```

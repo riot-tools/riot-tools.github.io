@@ -6,50 +6,227 @@ slug: /meiosis/api
 ---
 
 ```js
+
+import createStateStream from '@riot-tools/meiosis';
+import { createStateStream, clone, diff } from '@riot-tools/meiosis';
+
+const appState = createStateStream(intialState, {
+    statesToKeep?: 5,
+    flushOnRead?: false
+});
+
 const {
-    createStream,
     connect,
-    update,
-    getState,
-    getStream,
-    utils
-} = 'riot-meiosis';
+    stream,
+    dispatch
+} = appState;
+
+const {
+    dispatch,
+    addReducer,
+    removeReducer,
+    addListener,
+    removeListener,
+    states,
+    state,
+    flushStates,
+    resetState,
+    goToState,
+    prevState,
+    nextState,
+    clone
+} = stream;
+
+```
+
+### `createStateStream(initialState, options)`
+
+Creates an instance of an application state. Returns an object with `connect`, `stream,` and `dispatch`. See [Instance API](#instance-api).
+
+
+## Instance API
+
+### `stream`
+
+A state manager instance. This is what you use throughout your app to add listeners, reducers, and dispatch updated. See [Stream API](#stream-api).
+
+### `dispatch(value)`
+
+A shortcut to `stream.dispatch`.
+
+
+```html
+<samplecomponent>
+
+    <button onclick={ onClick }>ClickMe</button>
+
+    <script>
+
+        import { dispatch } from '../utils/store';
+
+        const component = {
+
+            onClick() {
+
+                dispatch({ clicked: true });
+            }
+        };
+
+    </script>
+</samplecomponent>
 ```
 
 
-### `createStream(reducer, initialState)`
+### `connect(mapToState, mapToComponent)(RiotComponent)`
 
-Simply put, this function returns an [Erre stream](https://github.com/GianlucaGuarini/erre#api) and sets your global application state. Both `stream` and `state` are only ever defined once, so you cannot run this function twice.
+HOC that maps application state into component state. It listens for changes between the mapped state and triggers updates only if there are any changes. Optionally can map actions to the component via an object or function.
 
-Both `reducer()` and `initialState` are required. You can set `initialState` to anything except `null` or `undefined`.
+```html
+<samplecomponent>
 
-* `reducer` *function, required* - Reducer that transforms incoming payloads into global state
-* `initialState` *any, required* - Initial app state. Can be set to anything except `null` or `undefined`.
+    ...
+
+    <script>
+
+        import { connect } from '../utils/store';
+
+        const component = {
+
+            onBeforeMount() { /* ... */}
+        };
+
+        const mapToState = (appState, ownState, ownProps) => ({
+            ...ownState,
+            data: ownProps.dogs ? appState.dogs : appState.cats
+        });
+
+        return connect(mapToState)(component);
+
+    </script>
+</samplecomponent>
+```
+
+## Stream API
+
+### `dispatch(update)`
+
+Pushes an update to the state.
+
+### `addReducer(...Function[])`
+
+Adds a function that modifies the dispatched state before registering it as a new state item. You can add as many of these as you want.
+
+```js
+
+const usersReducer = function ({ users }, currentState, ignore) {
+
+    if (!users) {
+        return ignore;
+    }
+
+    currentState.users = {
+        ...currentState.users,
+        ...users
+    };
+
+    return currentState
+};
+
+const dataReducer = function ({ data }, currentState, ignore) {
+
+    if (!data) {
+        return ignore
+    }
+
+    currentState.data = someWeirdProcessing(data, currentState.data);
+
+    return currentState;
+};
+
+stream.addReducer(
+    usersReducer,
+    dataReducer
+);
+```
+
+### `removeReducer(...Function[])`
+
+Removes reducers from the state stream. They will not longer modify the state once they are removed.
+
+```js
+stream.removeReducer(
+    usersReducer,
+    dataReducer
+);
+```
+
+### `addListener(...Function[])`
+
+Adds a listener that runs when updates are dispatched
+
+```js
+const someListener = (nextState, prevState) => {
+
+    doSomething(nextState);
+};
+
+stream.addListener(
+    someListener
+);
+```
+
+### `removeListener(...Function[])`
+
+Removes any attached listeners
+
+```js
+stream.removeListener(
+    someListener
+);
+```
+
+### `states()`
+
+Returns an history of all saved states, if any are being kept. The amount returned is affect by `statesToKeep` and `flushOnRead` options.
+
+### `state()`
+
+Returns current state
+
+### `flushStates()`
+
+Cleans all stored states, except current state. State is reset if it wasn't on the current state.
+
+### `resetState()`
+
+Sets the current state back to whatever it was. Useful for where stepping forward and backwards between states and then returning to your original state.
+
+### `goToState(stateID)`
+
+Travel to a particular state. Does not work with `flushOnRead` option.
+
+### `prevState()`
+
+Go back 1 state. Does not work with `flushOnRead` option.
+
+### `nextState()`
+
+Go forward 1 state. Does not work with `flushOnRead` option.
+
+### `clone(ManagerOptions)`
+
+Creates a child instance of manager. Receives parent's reducers and will update whever parent is updated. Adding reducers and listeners will not affect parent manager instance.
+
+```js
+
+const clone = stream.clone({ bidirectional: true }); // parent receives updates from child
 
 
-### `connect(mapToState, mapToComponent)(MyComponent)`
+stream.dispatch({ childShouldReceive: true });
 
-Decorator for implement state management on a Riot component. Application state is mapped to Component state, stream updates generate component updates only when there are changes to the relevant state, and component cleans up and  stops listening to state changes `onBeforeUnmount`.
+expect(clone.state().childShouldReceive).to.be.true();
 
-* `mapToState(appState, ownState, ownProps)` *function, required* - Function to reduce application state to relevant app state
-* `mapToComponent`: Optional
-    - *object* - Map an object to component
-    - *function* - `(ownProps, ownState) => ({})` - Map a function's return value to component. Receives component props and state. Should return an object.
+clone.dispatch({ parentShouldReceive: true });
 
-**Returns**
-
-Function to pass your component into. The result value is used to `export default` inside your Riot component and have a component that is conditionally connected to global state.
-
-### `update(newState)`
-
-Pushes an update through your reducer. This is a helper for `getStream().push(newState)`
-
-
-### `getState()`
-
-Returns the application state.
-
-
-### `getStream()`
-
-Returns the application state stream.
+expect(stream.state().parentShouldReceive).to.be.true();
+```
