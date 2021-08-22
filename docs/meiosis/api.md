@@ -79,7 +79,6 @@ HOC that maps application state into component state. It listens for changes bet
 
 > Connect HOC will give `this.dispatch()` function to your component making it simpler to update application state
 
-
 ```html
 <samplecomponent>
 
