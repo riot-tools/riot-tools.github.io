@@ -21,7 +21,7 @@ const features = [
         imageUrl: 'img/page-code.svg',
         description: (
             <>
-                Handling forms can be quiet tedious, hence why have built a Final Form wrapper to fit perfectly with Riot components.
+                UNDER CONSTRUCTION: Handling forms can be quiet tedious, hence why have built a Final Form wrapper to fit perfectly with Riot components.
             </>
         ),
     },
@@ -30,7 +30,7 @@ const features = [
         imageUrl: 'img/tools.svg',
         description: (
             <>
-                Take a peak into your state, or make your components Eventable, Queryable, and more!
+                TODO: Take a peak into your state, or make your components Eventable, Queryable, and more!
             </>
         ),
     },
