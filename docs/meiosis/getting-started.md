@@ -53,7 +53,6 @@ const { stream } = appState;
 
 stream.addReducer(reducer);
 
-// stream is simply an Erre stream
 stream.dispatch({
     initial: false,
     isNew: false
