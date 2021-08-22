@@ -9,7 +9,7 @@ import styles from './styles.module.css';
 const features = [
     {
         title: 'State Management',
-        imageUrl: 'img/undraw_docusaurus_mountain.svg',
+        imageUrl: 'img/list.svg',
         description: (
             <>
                 Designed in a way that makes it easy to adopt by almost anyone, especially those familiar with React.
@@ -18,7 +18,7 @@ const features = [
     },
     {
         title: 'Form Management',
-        imageUrl: 'img/undraw_docusaurus_tree.svg',
+        imageUrl: 'img/page-code.svg',
         description: (
             <>
                 Handling forms can be quiet tedious, hence why have built a Final Form wrapper to fit perfectly with Riot components.
@@ -27,7 +27,7 @@ const features = [
     },
     {
         title: 'Dev Tools',
-        imageUrl: 'img/undraw_docusaurus_react.svg',
+        imageUrl: 'img/tools.svg',
         description: (
             <>
                 Take a peak into your state, or make your components Eventable, Queryable, and more!

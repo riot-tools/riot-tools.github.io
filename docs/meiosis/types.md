@@ -5,34 +5,34 @@ sidebar_label: Types
 slug: /meiosis/types
 ---
 
-### `createStateStream`
+## Library
 
 ```ts
 declare type AnyState = Object | Array<any> | String | Map<any, any> | Set<any>;
 
-declare const createStateStream: (initialState: AnyState, options?: ManagerOptions) => {
-    stream: Manager;
+declare class RiotMeiosis {
+    stream: StateManager;
     connect: ConnectFunction;
-    update: (value: any) => Manager;
-};
-```
+    dispatch: (value: any) => any;
+    constructor(initialState: AnyState, options?: StateManagerOptions);
+}
 
-### `Manager`
+declare type StateManagerOptions = {
 
-```ts
-
-declare type ManagerOptions = {
     /** How many states changes to keep in memory */
     statesToKeep?: number;
+
     /** Removes states after reading */
     flushOnRead?: boolean;
+
     /** Parent stream */
-    parent?: Manager;
+    parent?: StateManager;
+
     /** Child stream should update parent stream */
     bidirectional?: boolean;
 };
 
-declare type ManagerState = {
+declare type StateManagerState = {
     state?: any;
     currentState?: number | null;
     latestState?: number | null;
@@ -40,45 +40,53 @@ declare type ManagerState = {
     childListener?: Function | null;
 };
 
-declare type ModifierFunction = (value: any, state?: any, ignore?: symbol) => any;
+declare type ReducerFunction = (value: any, state?: any, ignore?: symbol) => any;
 
-declare class Manager {
-    _options: ManagerOptions | null;
-    private _id;
-    private _sid;
-    private _stateId;
-    _internals: ManagerState;
+declare class StateManager {
+    _options: StateManagerOptions | null;
+    _internals: StateManagerState;
     _states: Map<number, any> | null;
-    _modifiers: Set<ModifierFunction> | null;
+    _reducers: Set<ReducerFunction> | null;
     _listeners: Set<Function> | null;
-    _parent: Manager | null;
-    constructor(initialState?: any, options?: ManagerOptions);
-    private _setInternals;
-    private _addState;
-    private _notifyListeners;
-    execs: number;
-    update(value: any, flow?: Manager[]): this;
-    modify(func: ModifierFunction): this;
-    unmodify(func: ModifierFunction): this;
-    listen(func: Function): this;
-    unlisten(func: Function): this;
+    _parent: StateManager | null;
+    constructor(initialState?: any, options?: StateManagerOptions);
+    dispatch(value: any, flow?: StateManager[]): this;
+    addReducer(...fns: ReducerFunction[]): this;
+    removeReducer(...fns: ReducerFunction[]): this;
+    addListener(...fns: Function[]): this;
+    removeListener(...fns: Function[]): this;
     states(): any[];
     state(): any;
     flushStates(): void;
     resetState(): void;
-    private _stateStepper;
+    goToState(sid: number): void;
     prevState(): void;
     nextState(): void;
-    clone(options?: ManagerOptions): Manager;
-    private _setupClone;
+    clone(options?: StateManagerOptions): StateManager;
 }
-```
 
-### `ConnectFunction`
-
-```ts
 interface ConnectFunction {
     (component: RiotComponentExport): RiotComponentExport;
 }
-declare const connectFactory: (stateStream: Manager) => ConnectFunction;
+
+declare const connectFactory: (stateStream: StateManager) => ConnectFunction;
+```
+
+## Utils
+
+```ts
+
+declare const isFunctionOrObject: (a: Function | Object) => boolean;
+
+declare const isUndefined: (val: any) => boolean;
+
+declare const assertFunction: (msg: String, func: Function) => void;
+
+declare const definePrivateProperties: (target: object, props: object) => void;
+
+declare const definePrivateGetters: (target: object, props: object) => void;
+
+declare const deepFreeze: (target: object) => void;
+
+declare const generateId: () => string;
 ```

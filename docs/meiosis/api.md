@@ -7,10 +7,9 @@ slug: /meiosis/api
 
 ```js
 
-import createStateStream from '@riot-tools/meiosis';
-import { createStateStream, clone, diff } from '@riot-tools/meiosis';
+import { RiotMeiosis } from '@riot-tools/meiosis';
 
-const appState = createStateStream(intialState, {
+const stateManager = new RiotMeiosis(intialState, {
     statesToKeep?: 5,
     flushOnRead?: false
 });
@@ -19,7 +18,7 @@ const {
     connect,
     stream,
     dispatch
-} = appState;
+} = stateManager;
 
 const {
     dispatch,
@@ -39,20 +38,17 @@ const {
 
 ```
 
-### `createStateStream(initialState, options)`
+### `new RiotMeiosis(initialState: AnyState, options: StateManagerOptions)`
 
-Creates an instance of an application state. Returns an object with `connect`, `stream,` and `dispatch`. See [Instance API](#instance-api).
+Creates an instance of an application state. Instantiates a class with with `connect`, `stream,` and `dispatch`.
 
-
-## Instance API
-
-### `stream`
+### `stateManager.stream: StateManager`
 
 A state manager instance. This is what you use throughout your app to add listeners, reducers, and dispatch updated. See [Stream API](#stream-api).
 
-### `dispatch(value)`
+### `stateManager.dispatch(value)`
 
-A shortcut to `stream.dispatch`.
+A wrapper for `stateManager.stream.dispatch`.
 
 
 ```html
@@ -77,9 +73,12 @@ A shortcut to `stream.dispatch`.
 ```
 
 
-### `connect(mapToState, mapToComponent)(RiotComponent)`
+### `stateManager.connect(mapToState: Function, mapToComponent: Function|Object)(RiotComponent)`
 
 HOC that maps application state into component state. It listens for changes between the mapped state and triggers updates only if there are any changes. Optionally can map actions to the component via an object or function.
+
+> Connect HOC will give `this.dispatch()` function to your component making it simpler to update application state
+
 
 ```html
 <samplecomponent>
@@ -108,7 +107,7 @@ HOC that maps application state into component state. It listens for changes bet
 
 ## Stream API
 
-### `dispatch(update)`
+### `dispatch(update: any)`
 
 Pushes an update to the state.
 
@@ -189,7 +188,7 @@ stream.removeListener(
 
 Returns an history of all saved states, if any are being kept. The amount returned is affect by `statesToKeep` and `flushOnRead` options.
 
-### `state()`
+### `state(): any`
 
 Returns current state
 
@@ -213,7 +212,7 @@ Go back 1 state. Does not work with `flushOnRead` option.
 
 Go forward 1 state. Does not work with `flushOnRead` option.
 
-### `clone(ManagerOptions)`
+### `clone(StateManagerOptions): StateManager`
 
 Creates a child instance of manager. Receives parent's reducers and will update whever parent is updated. Adding reducers and listeners will not affect parent manager instance.
 
