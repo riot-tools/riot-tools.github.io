@@ -32,6 +32,11 @@
   text-align: center;
 }
 
+.feature {
+
+  margin-bottom: 2rem;
+}
+
 .featureImage {
   height: 160px;
   width: 160px;

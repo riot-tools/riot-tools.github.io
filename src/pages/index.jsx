@@ -10,77 +10,104 @@ const features = [
     {
         title: 'State Management',
         imageUrl: 'img/list.svg',
+        urlBase: 'meiosis/getting-started',
         description: (
             <>
                 Designed in a way that makes it easy to adopt by almost anyone, especially those familiar with React.
             </>
-        ),
+        )
     },
     {
         title: 'Form Management',
         imageUrl: 'img/page-code.svg',
+        urlBase: 'final-form/getting-started',
         description: (
             <>
-                UNDER CONSTRUCTION: Handling forms can be quiet tedious, hence why have built a Final Form wrapper to fit perfectly with Riot components.
+                Handling forms can be quiet tedious, hence why have built a Final Form wrapper to fit perfectly with Riot components.
             </>
-        ),
+        )
     },
     {
         title: 'Dev Tools',
         imageUrl: 'img/tools.svg',
+        urlBase: '#',
+        buttonDisabled: true,
         description: (
             <>
                 TODO: Take a peak into your state, or make your components Eventable, Queryable, and more!
             </>
-        ),
-    },
+        )
+    }
 ];
 
-function Feature({ imageUrl, title, description }) {
+const Feature = ({ imageUrl, title, description, urlBase, buttonDisabled }) => {
+
     const imgUrl = useBaseUrl(imageUrl);
     return (
-        <div className={clsx('col col--4', styles.feature)}>
+        <div className={ clsx('col col--4', styles.feature) }>
             {imgUrl && (
                 <div className="text--center">
-                    <img className={styles.featureImage} src={imgUrl} alt={title} />
+                    <img className={ styles.featureImage } src={ imgUrl } alt={ title } />
                 </div>
             )}
             <h3>{title}</h3>
             <p>{description}</p>
+
+            <Link
+                className={ clsx(
+                    'button button--outline button--primary button--lg' + (buttonDisabled ? ' disabled' : ''),
+                    styles.getStarted
+                ) }
+                to={ useBaseUrl(urlBase) }>
+                Learn More
+            </Link>
         </div>
     );
-}
+};
 
-function Home() {
+const Home = () => {
+
     const context = useDocusaurusContext();
+
     const { siteConfig = {} } = context;
     return (
         <Layout
-            title={`Better RiotJS DX with ${siteConfig.title}`}
-            description="Take your RiotJS apps to the next level">
-            <header className={clsx('hero hero--primary', styles.heroBanner)}>
+            title={ `Better RiotJS DX with ${siteConfig.title}` }
+            description="Take your RiotJS apps to the next level"
+        >
+            <header className={ clsx('hero hero--primary', styles.heroBanner) }>
+
                 <div className="container">
+
                     <h1 className="hero__title">{siteConfig.title}</h1>
                     <p className="hero__subtitle">{siteConfig.tagline}</p>
-                    <div className={styles.buttons}>
+
+                    <div className={ styles.buttons }>
+
                         <Link
-                            className={clsx(
+                            className={ clsx(
                                 'button button--outline button--secondary button--lg',
-                                styles.getStarted,
-                            )}
-                            to={useBaseUrl('meiosis/getting-started')}>
+                                styles.getStarted
+                            ) }
+                            to={ useBaseUrl('meiosis/getting-started') }>
                             Get Started
                         </Link>
                     </div>
                 </div>
             </header>
+
             <main>
+
                 {features && features.length > 0 && (
-                    <section className={styles.features}>
+
+                    <section className={ styles.features }>
+
                         <div className="container">
+
                             <div className="row">
                                 {features.map((props, idx) => (
-                                    <Feature key={idx} {...props} />
+
+                                    <Feature key={ idx } { ...props } />
                                 ))}
                             </div>
                         </div>
@@ -89,6 +116,6 @@ function Home() {
             </main>
         </Layout>
     );
-}
+};
 
 export default Home;

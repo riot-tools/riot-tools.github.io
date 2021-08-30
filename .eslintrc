@@ -1,0 +1,63 @@
+// When react is relevant
+{
+    "extends": [
+        "plugin:@hapi/recommended",
+        "plugin:react/recommended"
+    ],
+    "parserOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module"
+    },
+    "rules": {
+        "strict": "off",
+        "no-unused-vars": [
+            "warn",
+            {
+                "argsIgnorePattern": "^_|request|h|server|options",
+                "args": "none",
+                "vars": "local",
+                "varsIgnorePattern": "^_"
+            }
+        ],
+        "max-len": ["warn", {
+            "code": 150,
+            "ignoreComments": false
+        }],
+        "max-depth": ["warn", { "max": 4 }],
+        "max-lines": ["warn", {
+            "max": 300,
+            "skipComments": true,
+            "skipBlankLines": true
+        }],
+        "max-lines-per-function": ["warn", {
+            "max": 100,
+            "skipComments": true,
+            "skipBlankLines": true
+        }],
+        "max-params": ["warn", 3],
+        "max-statements-per-line": ["warn", { "max": 2 }],
+        // "multiline-comment-style": ["warn", "starred-block"],
+        "multiline-ternary": ["error", "never"],
+        "no-useless-rename": ["error"],
+        "arrow-parens": "off",
+        "react/prop-types": "off",
+        "react/no-multi-comp": ["error", { "ignoreStateless": true }], // https://github.com/yannickcr/eslint-plugin-react/blob/master/docs/rules/no-multi-comp.md
+        "react/no-typos": ["error"], // https://github.com/yannickcr/eslint-plugin-react/blob/master/docs/rules/no-typos.md
+        "react/no-unused-state": ["warn"],
+        // "react/require-default-props": ["warn"], // https://github.com/yannickcr/eslint-plugin-react/blob/master/docs/rules/require-default-props.md
+        "react/sort-prop-types": ["warn", {
+            "callbacksLast": true,
+            "ignoreCase": false,
+            "requiredFirst": true,
+            "sortShapeProp": true,
+            "noSortAlphabetically": false
+        }], // https://github.com/yannickcr/eslint-plugin-react/blob/master/docs/rules/sort-prop-types.md
+        "react/jsx-curly-spacing": ["error", { "when": "always", "allowMultiline": false }], // https://github.com/yannickcr/eslint-plugin-react/blob/master/docs/rules/jsx-curly-spacing.md
+        "react/jsx-equals-spacing": ["error", "never"], // https://github.com/yannickcr/eslint-plugin-react/blob/master/docs/rules/jsx-equals-spacing.md
+        "react/jsx-filename-extension": [1, { "allow": "as-needed" }], // https://github.com/yannickcr/eslint-plugin-react/blob/master/docs/rules/jsx-filename-extension.md
+        "react/jsx-first-prop-new-line": ["warn", "multiline"], // https://github.com/yannickcr/eslint-plugin-react/blob/master/docs/rules/jsx-first-prop-new-line.md
+        "react/jsx-fragments": ["warn", "syntax"], // https://github.com/yannickcr/eslint-plugin-react/blob/master/docs/rules/jsx-fragments.md
+        "react/jsx-max-depth": ["warn", { "max": 5 }] // https://github.com/yannickcr/eslint-plugin-react/blob/master/docs/rules/jsx-max-depth.md
+
+    }
+}

@@ -36,5 +36,9 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "@hapi/eslint-plugin": "^5.1.0",
+    "eslint-plugin-react": "^7.25.1"
   }
 }
