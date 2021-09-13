@@ -18,6 +18,7 @@ module.exports = {
             items: [
                 { to: "/meiosis/getting-started", label: "Meiosis", position: "left" },
                 { to: "/final-form/getting-started", label: "Final Form", position: "left" },
+                { to: "/sak/getting-started", label: "SAK", position: "left" },
                 {
                     href: "https://github.com/riot-tools",
                     label: "GitHub",
