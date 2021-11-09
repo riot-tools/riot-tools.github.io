@@ -5,10 +5,11 @@ sidebar_label: Observable
 slug: /sak/observable
 ---
 
+**Credits:** This module is a reimplementation of [Riot Observable](https://github.com/riot/observable) made to support typings, OOP, nested observers, and debugging utility.
 
-## TODO
+The idea behind this refactor is to add a global event emitter to your application and be able to create child-observers that can have their own namespaced events. You can also wrap an existing object and make it observable; it will have the exact same API.
 
-## Observable
+## Example
 
 ```js
 import { Observable } from '@riot-tools/sak';
@@ -19,7 +20,6 @@ const observer = new Observable();
 
 const somethingToMakeAnObserver = {};
 const observer = new Observable(somethingToMakeAnObserver);
-
 
 // with configurable options
 const observer = new Observable(null, {
@@ -40,29 +40,63 @@ observer.off(ev, fn);
 observer.trigger(ev, fn);
 ```
 
-Observer other object-like components wrapping the same observer
+## Child observers
+
+Once an observer is instantiated, you can observe other components. This gives your component a limited observable API that ties into its parent observer.
 
 ```js
 const modal = {};
 
-// those events can have prefixes
+// those events can have namespaced prefixes
 observer.observe(modal, 'modal');
 
 observer.on('modal-open', () => {});
 
+// Because modal is namespaced, it will automatically prefix the event name with `modal`
 modal.trigger('open');
 
 // destroy when done;
 modal.cleanup();
 ```
 
-Install on riot components
+## Riot plugin
+
+You can install your observer onto your components as a plugin via `riot.install`.  Any listeners that are attached via `this.on` or `this.one` are automatically cleaned up before a comonent unmounts.
 
 ```js
-Riot.install(observer.install);
+Riot.install(component => observer.install(component));
 ```
 
-or directly
+`component.riot`
+
+```html
+
+<something>
+
+    ...
+
+    <script>
+
+        export default {
+
+            onClick() {
+
+                this.trigger('something-clicked');
+            },
+
+            onMounted() {
+
+                // will be automatically cleaned up before unmount
+                this.on('user-fetched', (user) => this.update({ user }));
+
+                fetchUser();
+            }
+        }
+    </script>
+</something>
+```
+
+You can also directly install the observer API on a specific component using the same function
 
 ```html
 <script>

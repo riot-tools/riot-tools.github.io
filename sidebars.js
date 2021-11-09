@@ -17,5 +17,11 @@ module.exports = {
         'sak/sak-options-validator',
         'sak/sak-queryable',
         'sak/sak-meta',
+    ],
+
+    'state-utils': [
+        'state-utils/state-utils-getting-started',
+        'state-utils/state-utils-api',
+        'state-utils/state-utils-helpers',
     ]
 };
